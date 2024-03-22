@@ -1,0 +1,182 @@
+\documentclass[12pt,oneside]{article}
+\usepackage{listings}
+\usepackage[ruled]{algorithm2e}
+\usepackage[czech]{babel}
+
+
+\usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+% Taken from https://gist.github.com/mpdehnel/cc43e89a09c18ef6a602
+\lstset{ %
+	backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	deletekeywords={...},            % if you want to delete keywords from the given language
+	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,                    % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	keywordstyle=\color{blue},       % keyword style
+	language=Python,                 % the language of the code
+	otherkeywords={*,...},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	stringstyle=\color{mymauve},     % string literal style
+	tabsize=2,                       % sets default tabsize to 2 spaces
+	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+\title{Domácí úkol k cvičení číslo 4}
+
+\begin{document}
+	\maketitle
+	\section{Příklady ke složitosti}
+	\subsection{Rozhodnětě a \underline{zdůvodněte}, jestli platí následující tvrzení:}
+		\begin{enumerate}
+		\item Pro funkci $f(n) = 8n^2 + 7n + 6$ platí:
+		\begin{align}
+			f(n) \in \Omega(n^2), \\
+			f(n) \in \Theta(n^2).
+		\end{align}
+		\item Pro funkci $g(n) = 4n\log(8n) + n + 10$ platí:
+		\begin{align}
+			g(n) \in O(n^2), \\
+			g(n) \in \Theta(n\log n).
+		\end{align}
+		\item Pro funkci $h(n) = 3n^2 + 10^4n+  \pi $ platí:
+		\begin{align}
+			h(n) \in O(n^3) ,\\
+			h(n) \in \Theta(n^3).
+		\end{align}
+	\end{enumerate}
+	Za dostatečné zdůvodnění se považuje výpočet odpovídající limity nebo ukázka toho, že lze nalézt $c_1, c_2$ a $n_0$ v definicích $\Omega, \Theta, O$, viz přednáška a doporučená literatura.
+	Dostatečné zdůvodnění by mělo obsahovat komentář v přirozeném jazyce, alespoň na úrovni: ,,Tvrzení platí/neplatí protože:\dots``
+	
+	\subsection{Určete a zdůvodněte jaká je složitost daného algoritmu}
+	\begin{algorithm}[ht]
+		\caption{What does this do?}
+		\DontPrintSemicolon
+		//Input: $n\times (n+1)$ matrix $A[0\dots n-1; 0 \dots n]$ of real numbers \;
+		\For{$i=0, \dots, n-2$}{
+			\For{$j=i+1, \dots, n-1$}{
+				\For{$k = i, \dots, n$}{
+					$A[j, k] = A[j, k] - A[i, k]*A[j, i]/ A[i, i] $\;
+				}
+			}
+		}
+		\Return {$A$}
+		\end{algorithm}
+		Předpokládejme, že cena všech operací násobení, sčítání, odečítání a dělení je stejná, a že je nezávislá na velikosti čísel.
+	Dále se nebudeme trápit dělením nulou.
+	Zápis \verb|for| cyklu v algoritmu je myšlený tak, že se začíná v dolní mezi a jde se do horní meze včetně.
+	
+	Jak by šlo algoritmus snadno zefektivnit?
+	
+	\subsection{Vyřešte rekurentní rovnici}
+	Najděte funkci $T$ takovou, že $T(0) = 1$ pro všechna $n \in \mathbb{N}$ (všechna kladná celá čísla) platí
+	\begin{align}
+		T(n) = 2 + T(n-1).
+	\end{align}
+	
+	\section{Úloha k naprogramování}
+	Finálním cílem je vyrobit si šikovnou reprezentaci grafu.
+	Budeme používat obvyklou definici grafu jako dvojice  množiny vrcholů a hran a budeme chtít mít možnost sestavit jeho incideční matici a později i matici sousednosti vrcholů a hran.
+	\subsection{Vstup}
+	Graf dostaneme zadaný textovým souborem, kde každý řádek bude ve formátu \newline
+	\verb|vrchol: seznam sousedních vrcholů oddělený čárkou a mezerou|.
+	\newline
+	Vrcholy jsou označené čísly, ne nutně po sobě jdoucími.  
+	Například:
+	\begin{verbatim}
+		1: 5, 6
+		5: 6
+	\end{verbatim}
+	je graf o třech vrcholech $\{1, 5, 6\}$ a třech hranách $\{(1, 5), (5, 6), (1, 6)\}$ a lze nakreslit jako trojúhelník.
+	
+	Pokud bude v textovém souboru nějaká hrana vícekrát, do grafu ji přidáme jen jednou.
+	Tj. následující soubor popisuje stejný graf
+	\begin{verbatim}
+		1: 5, 6
+		5: 1, 6
+		6: 1, 5
+	\end{verbatim}
+	Povolíme si i hrany, které začínají a končí ve stejném vrcholu, tj. \verb*|1:1| je ok.
+	Stejně tak akceptujeme i vrcholy, které nejsou v žádné hraně, tj. \verb*|1:| je ok.
+	
+	
+	\subsection{Implementace grafu}
+	Pro implementaci grafu použijte \verb*|std::unordered_map|. Je to lepší přístup než skrze pole/vektor, protože je rychlejší a umožňuje přístup a zápis typu \verb*|value = mapa[key]|.
+	Pro graf se hodí  \verb*|unordered_map<int, vector<int>>|, kde v prvním argumentu budou vrcholy a ve druhém bude seznam/vektor jeho sousedů.
+	
+	Až budete mít hotové parsování souboru a konstrukci grafu, implementujte funkci, která vytvoří matici sousednosti grafu.
+	
+	Minimalistická kostra programu je na následující stránce, nenechte se omezovat a rozšiřte podle potřeby jak struktury tak funkce.
+	
+\newpage
+	
+\begin{lstlisting}
+struct Graph {
+	unordered_map<int, vector<int>> adjacency_list;
+	int no_of_vertices;
+	int no_of_edges;
+};
+
+
+void printGraph(const Graph& graph) {
+	std::cout << "Graph:\n";
+	for (const auto& [vertex, neighbours] : graph.adjacency_list) {
+		std::cout << vertex << ": ";
+		for( int neighbour : neighbours) {
+			std::cout << neighbour << " ";
+		}
+		std::cout << "\n";
+	}
+	std::cout << std::endl;
+}
+
+
+Graph readGraphFromFile(const string& filename) {
+	Graph graph;
+	// parsing goes here
+	return graph;
+}
+
+
+vector<vector<int>> createAdjacencyMatrix(const Graph& graph) {
+	int n = graph.no_of_vertices;
+	vector<vector<int>> matrix(n, vector<int>(n, 0));
+	// matrix construction goes here
+	return matrix;
+}
+
+void printMatrix(const vector<vector<int>>& matrix) {
+	for (auto& line: matrix) {
+		for(int val: line) {
+			std:: cout << val << " ";
+		}
+		std::cout << "\n";
+	}
+}
+\end{lstlisting}
+	
+	
+\end{document}

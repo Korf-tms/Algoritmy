@@ -1,0 +1,133 @@
+\documentclass[12pt,oneside]{article}
+\usepackage{listings}
+\usepackage[ruled]{algorithm2e}
+\usepackage[czech]{babel}
+
+\usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+% Taken from https://gist.github.com/mpdehnel/cc43e89a09c18ef6a602
+\lstset{ %
+	backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	deletekeywords={...},            % if you want to delete keywords from the given language
+	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,                    % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	keywordstyle=\color{blue},       % keyword style
+	language=Python,                 % the language of the code
+	otherkeywords={*,...},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	stringstyle=\color{mymauve},     % string literal style
+	tabsize=2,                       % sets default tabsize to 2 spaces
+	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+\title{Domácí úkol k cvičení číslo 4}
+
+\begin{document}
+	\maketitle
+	\section{Příklady ke složitosti}
+	\subsection{Rozhodnětě a \underline{zdůvodněte}, jestli platí následující tvrzení:}
+	\begin{enumerate}
+		\item Pro funkci $f(n) = n^2 + 7^7n - 600$ platí:
+		\begin{align}
+			f(n) \in \Omega(n^2), \\
+			f(n) \in \Theta(n^2).
+		\end{align}
+		\item Pro funkci $g(n) = \log(8n^n) + 15n + 13$ platí:
+		\begin{align}
+			g(n) \in O(n^2), \\
+			g(n) \in \Theta(n\log n).
+		\end{align}
+		\item Pro funkci $h(n) = 3n^2 + 10^4n+  \pi $ platí:
+		\begin{align}
+			h(n) \in O(n^2) ,\\
+			h(n) \in \Theta(n^2).
+		\end{align}
+	\end{enumerate}
+	Za dostatečné zdůvodnění se považuje výpočet odpovídající limity nebo ukázka toho, že lze nalézt $c_1, c_2$ a $n_0$ v definicích $\Omega, \Theta, O$, viz přednáška a doporučená literatura.
+	Dostatečné zdůvodnění by mělo obsahovat komentář v přirozeném jazyce, alespoň na úrovni: ,,Tvrzení platí/neplatí protože:\dots``
+	
+	\subsection{Určete a zdůvodněte jaká je složitost daného algoritmu}
+	\begin{algorithm}[ht]
+		\caption{What does this do?}
+		\DontPrintSemicolon
+		//Input: $n\times (n+1)$ matrix $A[0\dots n-1; 0 \dots n]$ of real numbers \;
+		\For{$i=0, \dots, n-2$}{
+			\For{$j=i+1, \dots, n-1$}{
+				\For{$k = i, \dots, n$}{
+					$A[j, k] = A[j, k] - A[i, k]*A[j, i]/ A[i, i] $\;
+				}
+			}
+		}
+		\Return {$A$}
+	\end{algorithm}
+	Předpokládejme, že cena všech operací násobení, sčítání, odečítání a dělení je stejná, a že je nezávislá na velikosti čísel.
+	Dále se nebudeme trápit dělením nulou.
+	Zápis \verb|for| cyklu v algoritmu je myšlený tak, že se začíná v dolní mezi a jde se do horní meze včetně.
+	
+	Jak by šlo algoritmus snadno zefektivnit?
+	
+	\subsection{Vyřešte rekurentní rovnici}
+	Najděte funkci $T$ takovou, že $T(0) = 1$ pro všechna $n \in \mathbb{N}$ (všechna kladná celá čísla) platí
+	\begin{align}
+		T(n) = 2 + T(n-1).
+	\end{align}
+
+	\section{Úloha k naprogramování}
+	\subsection{Maticové funkce}
+	Pomocí dříve implementovaného násobení a sčítání matic implementujte výpočet funkcí $\exp, \sin, \cos$ pro čtvercové matice velikosti $M \times M$.
+	Matice implementujte jako \verb*|std::vector<std::vector<double>>|.
+	
+	
+	Funkce nebudeme počítat přesně, aproximujeme pomocí jejich Taylorových řad, které vyčíslíme do $N$-tého členu:
+	\begin{align}
+		\exp(A) \cong& \sum_{n=0}^{N} \frac{A^n}{n!} \\
+				\cong& 1 + \frac{A^1}{1!} + \frac{A^2}{2!} + \frac{A^3}{3!} + \frac{A^4}{4!} + \cdots + \frac{A^N}{N!} \\
+		\sin(A) \cong& \sum_{n=0}^N \frac{(-1)^n}{(2n+1)!}A^{2n+1} \\
+				\cong&\ A - \frac{A^3}{3!} + \frac{A^5}{5!} - \frac{A^7}{7!} + \cdots + (-1)^N\frac{A^{2N+1}}{(2N+1)!} \\
+		\cos(A) \cong& \sum_{n=0}^N \frac{(-1)^n}{(2n)!}A^{2n} \\
+				\cong&\ 1 - \frac{A^2}{2!} + \frac{A^4}{4!} - \frac{A^6}{6!} + \cdots + (-1)^N\frac{A^{2N}}{(2N)!}
+	\end{align}
+
+	Implementujte tyto funkce a určete, jaká je jich složitost v závislosti na $N$ a $M$.
+	
+	\subsection{Mocnění $x^n$ v $\log(n)$}
+	Rozmyslete a implementujte způsob, jak efektivněji počítat vyšší mocniny, který spočítá $n$-tou mocninu v řádově $\log(n)$ operacích. \textit{Myšlenka je následující}:
+	\begin{align}
+		x^2 &= x*x \\
+		x^3 &= x^2*x \\
+		x^4 &= x^2*x^2 \\
+		x^5 &= x^4*x \\
+		x^6 &= x^3*x^3 \\
+		x^7 &= x^6 * x \\
+		x^8 &= x^4 * x^4 
+	\end{align}
+	Tj. pro sudou mocninu znásobím $x^{n/2}*x^{n/2}$, pro lichou mocninu jednou násobím $x$ a přecházím na sudý případ.
+	Na výpočet $x^6$ pak stačí jen 3 násobení místo 5 při naivním výpočtu jako $x*x*x*x*x*x$.
+	
+	Napište rekurentní i iterativní implementaci.
+
+\end{document}
