@@ -99,7 +99,7 @@
 	
 	\section{Úloha k naprogramování}
 	Finálním cílem je vyrobit si šikovnou reprezentaci grafu.
-	Budeme používat obvyklou definici grafu jako dvojice  množiny vrcholů a hran a budeme chtít mít možnost sestavit jeho incideční matici a později i matici sousednosti vrcholů a hran.
+	Budeme používat obvyklou definici grafu jako dvojice  množiny vrcholů a hran a budeme chtít mít možnost sestavit jeho matici sousednosti a později i incideční matici vrcholů a hran.
 	\subsection{Vstup}
 	Graf dostaneme zadaný textovým souborem, kde každý řádek bude ve formátu \newline
 	\verb|vrchol: seznam sousedních vrcholů oddělený čárkou a mezerou|.
@@ -127,7 +127,15 @@
 	Pro implementaci grafu použijte \verb*|std::unordered_map|. Je to lepší přístup než skrze pole/vektor, protože je rychlejší a umožňuje přístup a zápis typu \verb*|value = mapa[key]|.
 	Pro graf se hodí  \verb*|unordered_map<int, vector<int>>|, kde v prvním argumentu budou vrcholy a ve druhém bude seznam/vektor jeho sousedů.
 	
-	Až budete mít hotové parsování souboru a konstrukci grafu, implementujte funkci, která vytvoří matici sousednosti grafu.
+	Až budete mít hotové parsování souboru a uložení grafu, tak implementujte funkci která vytvoří \textit{matici sousednosti} grafu.
+	\textit{Matice sousednosti} $M$ je čtvercová matice o velikosti $n_v \times n_v$, kde $n_v$ je počet vrcholů, taková, že
+	\begin{align}
+		M_{ij} =  \begin{cases}
+			1, & \text{pokud existuje hrana mezi vrcholy $v_i, v_j$}, \\
+			0, & \text{jinak}.
+		\end{cases}
+	\end{align}
+	Pro matici sousednosti tedy bude nutné vybrat si nejaké očíslování množiny vrcholů, implementovatelné třeba zase jako \verb*|std::unordered_map|.
 	
 	Minimalistická kostra programu je na následující stránce, nenechte se omezovat a rozšiřte podle potřeby jak struktury tak funkce.
 	
