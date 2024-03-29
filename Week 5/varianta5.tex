@@ -1,0 +1,159 @@
+\documentclass[12pt,oneside]{article}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage[ruled]{algorithm}
+\usepackage[czech]{babel}
+
+\usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+% Taken from https://gist.github.com/mpdehnel/cc43e89a09c18ef6a602
+\lstset{ %
+	backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	deletekeywords={...},            % if you want to delete keywords from the given language
+	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,                    % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	keywordstyle=\color{blue},       % keyword style
+	language=Python,                 % the language of the code
+	otherkeywords={*,...},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	stringstyle=\color{mymauve},     % string literal style
+	tabsize=2,                       % sets default tabsize to 2 spaces
+	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+%„“ 
+
+\title{Domácí úkol k cvičení číslo 5}
+
+\begin{document}
+	\maketitle
+	\section{Příklady ke složitosti}
+	Doporučuji postupovat podle přednášky, případně podle knihy „Introduction to the Design and Analysis of Algorithms.“
+	\subsection{Vyřešte rekurentní rovnici}
+	Najděte funkci $T$ takovou, že $T(0) = 1$ a pro všechna $n \in \mathbb{N}$ (všechna kladná celá čísla) platí\footnote{	Připomínám, že to znamená najít explicitní předpis výpočtu $T(n)$ pomocí $n$ a napsat jako \underline{matematickou} funkci, např. $T(n) = 2n + 5$.}
+	\begin{align}
+		T(n) = 5 T(n-1).
+	\end{align}
+	Prosím stručně okomentovat postup řešení.
+	
+	
+	\section{Úloha k naprogramování}
+	Naprogramujte funkci, která provádí „Shaker sort“ představený na přednášce.
+	Pro úplnost přidávám pseudokód (Algoritmus \ref{alg:shaker}) převzatý právě z přednášky a přípomínám, že použité značení pro \textbf{for} cyklus počítá s průchodem do horní meze včetně.
+	
+	
+
+
+Pro \textbf{Swap} použijte buď svoji vlastní funkci nebo \verb|std::swap|.
+Pro vstupní pole k setřízení je doporučeno použít \verb*|std::vector|.
+
+
+
+Až budete mít hotovou implementaci, porovnejte výsledek své funkce s tím, co dostanete z \verb|std::swap|.
+Pomocí následující funkce vytvořte náhodný vektor a vypusťte na něj svou funkci a \verb|std::swap|.
+
+\begin{lstlisting}
+#include <vector>
+#include <random>
+
+std::vector<int> generateRandomVector(int length, int minVal, int maxVal) {
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_int_distribution<int> distribution(minVal, maxVal);
+	
+	std::vector<int> result;
+	result.reserve(length); // better then series of push_backs
+	
+	for (int i = 0; i < length; ++i) {
+		result.push_back(distribution(gen));
+	}
+	return result;
+}
+\end{lstlisting}
+
+Pomocí následujícího pak změřte čas pro jednotlivé sorty v závislosti na délce vektoru.
+Takhle to vypadá pro knihovní sort, pro Váš to bude obdobné.
+\begin{lstlisting}
+#include <algorithm>
+#include <chrono>
+#include <iostream>
+
+auto start = std::chrono::high_resolution_clock::now();
+std::sort(randomVector.begin(), randomVector.end());
+auto end = std::chrono::high_resolution_clock::now();
+std::chrono::duration<double> duration = end - start;
+std::cout << "Time taken to sort the vector: " << duration.count() << " seconds" << std::endl;
+\end{lstlisting}
+
+\appendix
+
+\section{Pseudokód}
+
+	\begin{algorithm}
+	\caption{shakerSort($A$)}
+	\begin{algorithmic}[1]
+		\State $Left \gets 0;$
+		\State $Right \gets n - 1;$
+		\Repeat
+		\State \textsc{LeftToRight}$(A, Left, Right);$
+		\State \textsc{RightToLeft}$(A, Left, Right);$
+		\Until{$Left \geq Right;$}
+	\end{algorithmic}
+	\label{alg:shaker}
+\end{algorithm}
+
+\begin{algorithm}
+	\label{alg:LR}
+	\caption{leftToRight$(A, Left, Right)$}
+	\begin{algorithmic}[1]
+		\State $j \gets 0;$
+		\For{$i \gets Left$ \textbf{to} $Right - 1$}
+		\If{$A[i] > A[i + 1]$}
+		\State \textbf{Swap}$(A[i], A[i + 1]);$
+		\State $j \gets i;$
+		\EndIf
+		\EndFor
+		\State $Right \gets j;$
+	\end{algorithmic}
+\end{algorithm}
+
+
+\begin{algorithm}
+	\label{alg:RL}
+	\caption{rightToLeft$(A, Left, Right)$}
+	\begin{algorithmic}[1]
+		\State $j \gets 0;$
+		\For{$i \gets Right$ \textbf{downto} $Left + 1$}
+		\If{$A[i - 1] > A[i]$}
+		\State \textbf{Swap}$(A[i - 1], A[i]);$
+		\State $j \gets i;$
+		\EndIf
+		\EndFor
+		\State $Left \gets j;$
+	\end{algorithmic}
+\end{algorithm}
+	
+\end{document}
