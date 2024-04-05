@@ -1,0 +1,133 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{listings}
+\usepackage[czech]{babel}
+\usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+
+	% Taken from https://gist.github.com/mpdehnel/cc43e89a09c18ef6a602
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+	
+	\lstset{ %
+		backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+		basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+		breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+		breaklines=true,                 % sets automatic line breaking
+		captionpos=b,                    % sets the caption-position to bottom
+		commentstyle=\color{mygreen},    % comment style
+		deletekeywords={...},            % if you want to delete keywords from the given language
+		escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+		extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+		frame=single,                    % adds a frame around the code
+		keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+		keywordstyle=\color{blue},       % keyword style
+		language=Python,                 % the language of the code
+		otherkeywords={*,...},            % if you want to add more keywords to the set
+		numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+		numbersep=5pt,                   % how far the line-numbers are from the code
+		numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+		rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+		showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+		showstringspaces=false,          % underline spaces within strings only
+		showtabs=false,                  % show tabs within strings adding particular underscores
+		stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+		stringstyle=\color{mymauve},     % string literal style
+		tabsize=2,                       % sets default tabsize to 2 spaces
+		title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+	}
+
+		
+\title{Domácí úkol k cvičení číslo 6}
+
+\date{\today}
+	
+	\begin{document}
+
+		\maketitle
+	
+	\section{Assignment Problem}
+	
+	Mějme $n$ lidí, které je potřeba přiřadit k vykonání $n$ úkolů, jeden člověk na jeden úkol. Náklady, které by vznikly, pokud by $i$-tý člověk byl přiřazen k $j$-tému úkolu, označme jako $C[i, j]$ pro každý pár $i, j = 1, 2, . . . , n$. Úkolem je najít přiřazení s minimální celkovou cenou.
+	
+	Zadání je převzaté ze strany 119 z  knihy \textit{Introduction to the design \& analysis of algorithms}.
+	Problém si zasloužil i vlastní \href{https://en.wikipedia.org/wiki/Assignment_problem}{stránku na Wikipedii}.
+	Tam lze také najít mnoho zajímavých algoritmů k řešení tohoto problému.
+	
+	\paragraph{Příklad}
+	
+	Malá instance tohoto problému je následující, s tabulkou reprezentujícími náklady na přiřazení $C[i, j]$:
+	
+	\[
+	\begin{array}{c|cccc}
+		& \text{Job 1} & \text{Job 2} & \text{Job 3} & \text{Job 4} \\
+		\hline
+		\text{Person 1} & 9 & 2 & 7 & 8 \\
+		\text{Person 2} & 6 & 4 & 3 & 7 \\
+		\text{Person 3} & 5 & 8 & 1 & 8 \\
+		\text{Person 4} & 7 & 6 & 9 & 4 \\
+	\end{array}
+	\]
+	
+	\subsection{Bruteforce řešení}
+	
+	Pro naivní řešení pomocí bruteforce prohledávání použijte metodu procházení všech možných permutací, které odpovídají jednotlivých přiřazením, a výpočet celkové ceny pro každou permutaci.
+	Nejprve je vytvořen vektor přiřazení, který obsahuje počáteční přiřazení, kde každá osoba je přiřazena k odpovídajícímu indexu úkolu.
+	Pak postupně generujte všechny možné permutace tohoto vektoru přiřazení, napočítejte cenu jednotlivých přiřazení a udělejte update minima.
+	Permutace generujte pomocí funkce \texttt{std::next\_permutation}, popřípadě po vlastní ose.
+	
+	Pro jaké největší $n$ Váš výsledný program doběhne pod 10s?
+	
+	\paragraph{Příkládek}
+	Uvažujme permutaci přiřazení: (2, 3, 4, 1) v příkladu výše.
+	To znamená, že Person 1 je přiřazena k Job 2, Person 2 k Job 3, Person 3 k Job 4 a Person 4 k Job 1.
+	Vypočtěme celkovou cenu této permutace:
+	\[
+	\text{Total cost} = C[1, 2] + C[2, 3] + C[3, 4] + C[4, 1] = 2 + 3 + 8 + 7 = 20.
+	\]
+	Porovnáme s minimem a jdeme na další permutaci, dokud neprojdeme všechny.
+	
+
+	\newpage
+	
+	\section{Návrh kostry řešení}
+	
+	Komentované iniciativě se meze nekladou.
+	
+	\begin{lstlisting}
+		#include <iostream>
+		#include <vector>
+		#include <algorithm>
+		#include <limits>
+		
+		using std::vector, std::next_permutation, std::cout, std::numeric_limits;
+		
+		int assignmentProblem(const vector<vector<int>>& costMatrix) {
+			int n = costMatrix.size();
+			int minCost = numeric_limits<int>::max();
+			vector<int> assignment(n);
+			
+			
+			// TODO: loop over all assignments==permutations and find minimum
+			
+			return minCost;
+		}
+		
+		int main() {
+			vector<vector<int>> testCostMatrix = {
+				{9, 2, 7, 8},
+				{6, 4, 3, 7},
+				{5, 8, 1, 8},
+				{7, 6, 9, 4}
+			};
+			
+			vector<vector<int>> bigCostMatrix = // something random
+			
+			return 0;
+		}
+	\end{lstlisting}
+	
+\end{document}
