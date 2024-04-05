@@ -1,0 +1,219 @@
+\documentclass[12pt,oneside]{article}
+\usepackage{algpseudocode}
+\usepackage{listings}
+\usepackage[ruled]{algorithm}
+\usepackage[czech]{babel}
+
+\usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+% Taken from https://gist.github.com/mpdehnel/cc43e89a09c18ef6a602
+\lstset{ %
+	backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+	basicstyle=\footnotesize\ttfamily,        % the size of the fonts that are used for the code
+	breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+	breaklines=true,                 % sets automatic line breaking
+	captionpos=b,                    % sets the caption-position to bottom
+	commentstyle=\color{mygreen},    % comment style
+	deletekeywords={...},            % if you want to delete keywords from the given language
+	escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+	extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+	frame=single,                    % adds a frame around the code
+	keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+	keywordstyle=\color{blue},       % keyword style
+	language=Python,                 % the language of the code
+	otherkeywords={*,...},            % if you want to add more keywords to the set
+	numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+	numbersep=5pt,                   % how far the line-numbers are from the code
+	numberstyle=\tiny\color{mygray}, % the style that is used for the line-numbers
+	rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+	showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+	showstringspaces=false,          % underline spaces within strings only
+	showtabs=false,                  % show tabs within strings adding particular underscores
+	stepnumber=2,                    % the step between two line-numbers. If it's 1, each line will be numbered
+	stringstyle=\color{mymauve},     % string literal style
+	tabsize=2,                       % sets default tabsize to 2 spaces
+	title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+%„“ 
+
+\title{Domácí úkol k cvičení číslo 6}
+\date{\today}
+
+\begin{document}
+	\maketitle
+	
+	\section{Graf ze souboru}
+	
+	Finálním cílem je vyrobit si šikovnou reprezentaci grafu.
+	Budeme používat obvyklou definici grafu jako dvojice množiny vrcholů a hran a budeme chtít mít možnost sestavit jeho matici sousednosti a později i incidencí matici vrcholů a hran.
+	Výsledné struktury později použijeme pro procházení do hloubky a šířky.
+	
+	\subsection{Vstup}
+	
+	Graf dostaneme zadaný textovým souborem, kde každý řádek bude ve formátu 
+	\begin{verbatim}
+		vrchol: seznam sousedních vrcholů oddělený čárkou a mezerou
+	\end{verbatim}
+	Vrcholy jsou označené čísly, ne nutně po sobě jdoucími.  
+	Například:
+		\begin{verbatim}
+		1: 5, 6
+		5: 1, 6
+		6: 1, 5
+	\end{verbatim}
+	je graf o třech vrcholech $\{1, 5, 6\}$ a třech hranách $\{(1, 5), (5, 6), (1, 6)\}$ a lze nakreslit jako trojúhelník.
+	
+	Budou nás zajímat pouze neorientované grafy, ve kterých je hrana $(v_i, v_j)$ totéž jako $(v_j, v_i)$.
+	Grafy by pak bylo možné zapisovat i úsporněji.
+	Tj. následující soubor popisuje stejný graf
+		\begin{verbatim}
+		1: 5, 6
+		5: 6
+	\end{verbatim}
+	a měl by mít i stejnou reprezentaci pomocí seznamu sousedů.
+	Všimněte si, že do grafu je pak třeba přidávat i vrcholy, které jsou napravo od dvojtečky, v tomto případě vrchol \verb|6|.
+	
+	Povolíme si i hrany, které začínají a končí ve stejném vrcholu, tj. \verb*|1:1| je ok.
+	Vrcholy, které nejsou v žádné hraně, akceptovat nebudeme a budeme předpkládat, že je nedostaneme na vstup, tj. \verb*|1:| není ok vstup.
+	
+	\subsection{Implementace grafu}
+	
+	Pro implementaci grafu použijte \verb|std::unordered_map|. Je to lepší přístup než skrze pole/vektor.
+	Pro graf se hodí \verb|unordered_map<int, vector<int>>|, kde v prvním argumentu budou vrcholy a ve druhém bude vektor jeho sousedů, stejně jako na cvičení.
+	
+	Při procházení souboru a zapisování grafu se bude hodit funkce \verb*|std::find| pro určení, jestli hrana už v grafu je anebo jestli je třeba ji přidat.
+	
+	Pro přidání hrany, pokud už v grafu není, stačí použít operátor \verb*|[]|:
+	\begin{verbatim}
+		graph.adjacency_list[vertex_1].emplace_back(vertex_2);
+	\end{verbatim}
+	
+	\paragraph{Matice sousednosti}
+	Až budete mít hotové parsování souboru a uložení grafu, tak implementujte funkci která vytvoří \textit{matici sousednosti} grafu.
+	Tohle by mělo být zadarmo ze cvičení.
+	\textit{Matice sousednosti} $M$ je čtvercová matice o velikosti $n_v \times n_v$, kde $n_v$ je počet vrcholů, taková, že
+	\begin{align}
+		M_{ij} =  \begin{cases}
+			1, & \text{pokud existuje hrana mezi vrcholy $v_i, v_j$}, \\
+			0, & \text{jinak}.
+		\end{cases}
+	\end{align}
+	Pro matici sousednosti tedy bude nutné vybrat si nejaké očíslování množiny vrcholů, implementovatelné třeba zase jako \verb|std::unordered_map|.
+	
+	
+	\paragraph{Testy}
+	Svůj program vyzkoušejte na několika ruzných rozumně malých grafech.
+	Například:
+	\begin{verbatim}
+	7: 10, 111, 3
+	10: 7, 111, 3
+	111: 7, 10, 3
+	3: 7, 10, 111
+	\end{verbatim}
+	Odpovídá kompletnímu grafu(=mezi každými dvěmi vrcholy je hrana) na čtyrech vrcholech a jeho matice sousednosti by tedy měla mít jedničku na každé pozici.
+	Jeho úsporná varianta
+	\begin{verbatim}
+	7: 10, 111, 3
+	10: 111, 3
+	111: 3
+	\end{verbatim}
+	by měla vést ke stejným výsledkům.
+	
+	Graf zadaný jako
+	\begin{verbatim}
+	1: 22, 55555
+	22: 1, 333
+	333: 22, 4444
+	4444: 333, 55555
+	55555: 1, 4444
+	\end{verbatim}
+	Odpovídá kružnici/pětiúhelníku a jeho matice sousednosti bude mít jedničky jen nad a pod diagonálou a v levém dolním a pravém horním rohu.
+	Úspornější zápis téhož grafu je:
+	\begin{verbatim}
+	1: 22
+	22: 333
+	333: 4444
+	4444: 55555
+	55555: 1
+\end{verbatim}
+
+
+	Na náledující stránce je návrh struktury a některé užitečné funkce.
+	
+	\newpage
+	\begin{lstlisting}
+  struct Graph {
+		unordered_map<int, vector<int>> adjacency_list;
+		unordered_map<int, int> vertex_to_mat_index;
+		int no_of_vertices;
+		int no_of_edges;
+    };
+		
+		
+		void printGraph(const Graph& graph) {
+			std::cout << "Graph:\n";
+			for (const auto& [vertex, neighbours] : graph.adjacency_list) {
+				std::cout << vertex << ": ";
+				for( int neighbour : neighbours) {
+					std::cout << neighbour << " ";
+				}
+				std::cout << "\n";
+			}
+			std::cout << std::endl;
+		}
+		
+		
+		Graph readGraphFromFile(const string& filename) {
+			Graph graph;
+			// TODO parsing goes here
+			return graph;
+		}
+		
+		
+		vector<vector<int>> createAdjacencyMatrix(const Graph& graph) {
+			int n = graph.no_of_vertices;
+			vector<vector<int>> matrix(n, vector<int>(n, 0));
+			// matrix construction goes here
+			return matrix;
+		}
+		
+		void constructIndexingMap(Graph& graph) {
+			int index = 0;
+			unordered_map<int, int> res;
+			for (const auto& kv: graph.adjacency_list) {
+				res[kv.first] = index;
+				index += 1;
+			}
+			graph.vertex_to_mat_index = res;
+		}
+		
+		
+		void printGraphIndexingMap(const Graph& graph) {
+			std::cout << "Graph vertex to index map:\n";
+			for (const auto& [vertex, index] : graph.vertex_to_mat_index) {
+				std::cout << vertex << ": " << index << ", ";
+			}
+			std::cout << std::endl;
+		}
+		
+		void printMatrix(const vector<vector<int>>& matrix) {
+			for (auto& line: matrix) {
+				for(int val: line) {
+					std:: cout << val << " ";
+				}
+				std::cout << "\n";
+			}
+		}
+	\end{lstlisting}
+	
+\end{document}
