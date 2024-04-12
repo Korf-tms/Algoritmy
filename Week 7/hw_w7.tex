@@ -1,0 +1,75 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{listings}
+\usepackage[czech]{babel}
+% \usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+
+\title{Domácí úkol k cvičení číslo 7}
+\author{}
+\date{\today}
+
+\begin{document}
+	
+	\maketitle
+	
+	\section*{Popis 8-Puzzle}
+	
+	8-Puzzle je skládačka, která se hraje na mřížce o rozměrech 3x3 s osmi čtvercovými dlaždicemi označenými čísly 1 až 8 a jedním prázdným místem.
+	Cílem je přeuspořádat dlaždice tak, aby byly ve správném pořadí podle řádků.
+	\begin{table}[h]
+	\begin{center}
+		\begin{tabular}{|c|c|c|}
+			\hline
+			& 1 & 2 \\ \hline
+			3 & 4 & 5 \\ \hline
+			6 & 7 & 8 \\ \hline
+		\end{tabular}
+	\end{center}
+\caption{Cílová konfigurace}
+\end{table}
+	Je povoleno posouvat dlaždice buď horizontálně, nebo vertikálně do prázdného místa.
+	Následující diagram ukazuje posloupnost možných tahů:
+	 
+ \begin{center}
+ 	\begin{tabular}{cccc}
+ 		\begin{tabular}{|c|c|c|}
+ 			\hline
+ 			1 & 3 & \\ \hline
+ 			4 &  8& 5 \\ \hline
+ 			7 & 2 & 6 \\ \hline
+ 		\end{tabular}
+ 		&
+ 		$\rightarrow$
+ 		\begin{tabular}{|c|c|c|}
+ 			\hline
+ 			1 & & 3 \\ \hline
+ 			4 & 8 & 5 \\ \hline
+ 			7 & 2 & 6 \\ \hline
+ 		\end{tabular}
+ 		&
+ 		$\rightarrow$
+ 		\begin{tabular}{|c|c|c|}
+ 			\hline
+ 			1 & 8 & 3 \\ \hline
+ 			4 &  &5 \\ \hline
+ 			7 & 2 & 6 \\ \hline
+ 		\end{tabular}
+ 		&
+ 		$\rightarrow$
+ 		\begin{tabular}{|c|c|c|}
+ 			\hline
+ 			1 & 8 & 3 \\ \hline
+ 			4 & 2 &5 \\ \hline
+ 			7 &  &6 \\ \hline
+ 		\end{tabular}
+ 	\end{tabular}
+ \end{center}
+	
+	\subsection*{Zadání úkolu}
+	
+	Vaším úkolem je implementovat algoritmus pro řešení 8-Puzzle pomocí prohledávání do hloubky (DFS).
+	Vaše implementace by měla najít vzít vstupní konfiguraci a pomocí DFS ukázat, jestli z ní lze dojít do cílové configurace.
+	
+	Vše implementujte pro obecné $n\times n$ schéma, v \verb| main|u pak program vyzkoušejte pro několik $3\times 3$ vstupních konfigurací.
+\end{document}
