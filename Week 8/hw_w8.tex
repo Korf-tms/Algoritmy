@@ -1,0 +1,54 @@
+\documentclass{article}
+\usepackage{amsmath}
+\usepackage[colorlinks=true]{hyperref}
+\usepackage{listings}
+\usepackage[czech]{babel}
+% \usepackage[a4paper,margin=2cm,head=0.5cm,foot=0.5cm]{geometry}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\title{Domácí úkol k cvičení číslo 8}
+\author{}
+\date{\today}
+
+\begin{document}
+	
+\maketitle
+
+\section*{Generování permutací - Levitin str. 145}
+Permutace budeme generovat pomocí čísel se šipkami, např. $\overset{\rightarrow}{5}, \overset{\leftarrow}{7} $.
+Číslo se šipkou \( k \) je   \textit{mobilní}, pokud jeho šipka ukazuje na menší číslo vedle něj.
+Například, pro permutaci
+\[ \overset{\leftarrow}{3} \overset{\leftarrow}{2} \overset{\rightarrow}{4} \overset{\rightarrow}{1}, \]
+je prvek 4 mobilní, zatímco 2 a 1 nejsou.
+S použitím pojmu mobilního prvku, můžeme dát následující popis algoritmu Johnson-Trotter pro generování permutací.
+
+\begin{algorithm}
+	\caption{JohnsonTrotter($n$)}
+	\begin{algorithmic}[1]
+		\Procedure{JohnsonTrotter}{$n$}
+		\State Inicializuj první permutaci jako \( \overset{\leftarrow}{1} \overset{\leftarrow}{2} \ldots \overset{\leftarrow}{n} \)
+		\While{předchozí permutace obsahuje mobilní prvek}
+		\State Najdi její největší mobilní prvek $k$
+		\State Proveďte výměnu prvku $k$ s prvkem, na který ukazuje jeho šipka
+		\State Otočte směry šipek všech prvků, které jsou větší než $k$
+		\State Přidejte novou permutaci do seznamu
+		\EndWhile
+		\EndProcedure
+	\end{algorithmic}
+\end{algorithm}
+
+\textbf{Při implementaci proveďte rozumné rozdělení programu do funkcí.}
+
+Zde je aplikace tohoto algoritmu pro \( n = 3 \):
+\[
+\overset{\leftarrow}{1} \; \overset{\leftarrow}{2} \; \overset{\leftarrow}{3} \quad
+\overset{\leftarrow}{1} \; \overset{\leftarrow}{3} \; \overset{\leftarrow}{2} \quad
+\overset{\leftarrow}{3} \; \overset{\leftarrow}{1} \; \overset{\leftarrow}{2} \quad
+\overset{\rightarrow}{3} \; \overset{\leftarrow}{2} \; \overset{\leftarrow}{1} \quad
+\overset{\leftarrow}{2} \; \overset{\rightarrow}{3} \; \overset{\leftarrow}{1} \quad
+\overset{\leftarrow}{2} \; \overset{\leftarrow}{1} \; \overset{\rightarrow}{3}.
+\]
+
+
+\end{document}
