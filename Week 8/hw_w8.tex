@@ -17,11 +17,11 @@
 
 \section*{Generování permutací - Levitin str. 145}
 Permutace budeme generovat pomocí čísel se šipkami, např. $\overset{\rightarrow}{5}, \overset{\leftarrow}{7} $.
-Číslo se šipkou \( k \) je   \textit{mobilní}, pokud jeho šipka ukazuje na menší číslo vedle něj.
+Číslo se šipkou \( k \) je \textit{mobilní}, pokud jeho šipka ukazuje na menší číslo vedle něj.
 Například, pro permutaci
 \[ \overset{\leftarrow}{3} \overset{\leftarrow}{2} \overset{\rightarrow}{4} \overset{\rightarrow}{1}, \]
-je prvek 4 mobilní, zatímco 2 a 1 nejsou.
-S použitím pojmu mobilního prvku, můžeme dát následující popis algoritmu Johnson-Trotter pro generování permutací.
+je prvek 4 mobilní, zatímco 3, 2 a 1 nejsou.
+S použitím pojmu mobilního prvku můžeme dát následující popis algoritmu Johnson-Trotter pro generování permutací.
 
 \begin{algorithm}
 	\caption{JohnsonTrotter($n$)}
@@ -39,6 +39,7 @@ S použitím pojmu mobilního prvku, můžeme dát následující popis algoritm
 \end{algorithm}
 
 \textbf{Při implementaci proveďte rozumné rozdělení programu do funkcí.}
+Použijte adekvátní datové struktury, ať vyrobíte čitelný program.
 
 Zde je aplikace tohoto algoritmu pro \( n = 3 \):
 \[
@@ -49,6 +50,8 @@ Zde je aplikace tohoto algoritmu pro \( n = 3 \):
 \overset{\leftarrow}{2} \; \overset{\rightarrow}{3} \; \overset{\leftarrow}{1} \quad
 \overset{\leftarrow}{2} \; \overset{\leftarrow}{1} \; \overset{\rightarrow}{3}.
 \]
+Srovejte výstup Vašeho programu s tím, co dostanete pomocí \verb|std::next_permution|.
+Srovnejte rychlosti pro velká $n$.
 
 
 \end{document}
