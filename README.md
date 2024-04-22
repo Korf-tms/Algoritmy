@@ -1,3 +1,3 @@
 # Algoritmy
 
-Repozitář se zadáním domácích úkolů.
+Repozitář se zadáním (a někdy i řešením) domácích úkolů.
