@@ -59,7 +59,7 @@ unordered_set<int> depthSearch(const Graph& g, int starting_point){
     return visited;
 }
 
-// pruchod do hloubky
+// pruchod do sirky
 unordered_set<int> widthSearch(const Graph& g, int starting_point){
     queue<int> g_queue;
     unordered_set<int> visited;
